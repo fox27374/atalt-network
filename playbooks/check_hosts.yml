@@ -1,0 +1,8 @@
+---
+- name: Check Reachability
+  hosts: all
+  tasks:
+    - name: Ansible Ping
+      ping:
+
+...
