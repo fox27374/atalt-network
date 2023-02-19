@@ -1,17 +1,8 @@
 ---
-- name: Update Repositories
-  become: yes
-  ansible.builtin.apt:
-    update_cache: yes
+#- name: Install Software
+#  import_tasks: install_software.yml
+#  when: ansible_facts['os_family']|lower == 'debian'
 
-- name: Upgrade Software
-  become: yes
-  ansible.builtin.apt:
-    upgrade: yes
-
-- name: Install Packages
-  become: yes
-  ansible.builtin.apt:
-    name: vim
-    state: present
+- name: Copy sshd_config
+  import_tasks: cp_sshd_config.yml
 ...

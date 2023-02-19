@@ -1,0 +1,9 @@
+PermitRootLogin no
+ChallengeResponseAuthentication no
+AllowUsers dkofler dk ansible
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp	/usr/lib/openssh/sftp-server
+PasswordAuthentication yes

@@ -1,2 +1,4 @@
 ---
-# handlers file for base
+- name: Restart SSH Service
+  import_tasks: restart_ssh.yml
+...

@@ -1,5 +1,5 @@
 ---
-- hosts: vm
+- hosts: vm rpi
   roles:
     - base
 ...

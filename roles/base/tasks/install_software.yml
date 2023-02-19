@@ -1,0 +1,17 @@
+---
+- name: Update Repositories
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Upgrade Software
+  become: yes
+  ansible.builtin.apt:
+    upgrade: yes
+
+- name: Install Packages
+  become: yes
+  ansible.builtin.apt:
+    name: vim
+    state: present
+...
