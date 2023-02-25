@@ -1,2 +1,14 @@
 ---
-# defaults file for base
+packages:
+  - vim
+  - ufw
+
+ufw_apps_path: /etc/ufw/applications.d
+
+ufw_apps:
+  - ssh-custom
+
+fail2ban_jails_path: /etc/fail2ban/jail.d
+fail2ban_jails:
+  - fail2ban-custom.conf
+...

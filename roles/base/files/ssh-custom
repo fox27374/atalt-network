@@ -1,0 +1,4 @@
+[ssh-custom]
+title=SSH Server
+description=SSH Server (22)
+ports=22/tcp

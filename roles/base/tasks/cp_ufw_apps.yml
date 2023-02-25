@@ -1,0 +1,32 @@
+---
+- name: Collect UFW apps
+  ansible.builtin.find:
+    paths: "{{ ufw_apps_path }}"
+    use_regex: yes
+    excludes: '.*custom'
+  register: collected_files
+
+- name: Delete UFW apps
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ collected_files.files }}"
+
+- name: Copy UFW apps
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/ufw/applications.d/
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ ufw_apps }}"
+
+- name: Enable UFW apps
+  become: yes
+  ufw:
+    rule: allow
+    name: "{{ item }}"
+  loop: "{{ ufw_apps }}"
+...

@@ -1,0 +1,27 @@
+---
+- name: Collect fail2ban jails
+  ansible.builtin.find:
+    paths: "{{ fail2ban_jails_path }}"
+    use_regex: yes
+    excludes: '.*custom.conf'
+  register: collected_jails
+
+- name: Delete fail2ban jails
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ collected_jails.files }}"
+
+- name: Copy fail2ban jails
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ fail2ban_jails_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ fail2ban_jails }}"
+  notify:
+    - Restart fail2ban Service
+...

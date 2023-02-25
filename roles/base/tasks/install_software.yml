@@ -12,6 +12,7 @@
 - name: Install Packages
   become: yes
   ansible.builtin.apt:
-    name: vim
+    name: "{{ item }}"
     state: present
+  loop: "{{ packages }}"
 ...

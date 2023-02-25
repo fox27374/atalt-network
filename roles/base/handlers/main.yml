@@ -1,4 +1,7 @@
 ---
 - name: Restart SSH Service
   import_tasks: restart_ssh.yml
+
+- name: Restart fail2ban Service
+  import_tasks: restart_fail2ban.yml
 ...
