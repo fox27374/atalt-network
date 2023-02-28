@@ -1,0 +1,24 @@
+# Custom sources
+source s_fail2ban {
+    file("/var/log/fail2ban.log");
+};
+source s_ufw {
+    file("/var/log/ufw.log");
+};
+
+# Remote syslog destination
+destination d_net { 
+    udp(
+        {{ syslog_dest }}
+        port({{ syslog_port }})
+        log_fifo_size(1000)
+        );
+};
+
+# Send all internal logs to the remote syslog
+# s_src is defined in the main syslog-ng.conf
+log { source(s_src); destination(d_net); };
+
+# Custom logs
+log { source(s_fail2ban); destination(d_net); };
+log { source(s_ufw); destination(d_net); };

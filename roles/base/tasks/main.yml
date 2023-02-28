@@ -1,14 +1,25 @@
 ---
 #- name: Install Software
 #  import_tasks: install_software.yml
-#  when: ansible_facts['os_family']|lower == 'debian'
+  #when: ansible_facts['os_family']|lower == 'debian'
 
-- name: Copy sshd_config
-  import_tasks: cp_sshd_config.yml
+- name: Setup SSH
+  import_tasks: setup_ssh.yml
+  tags: ssh
 
-- name: Copy UFW apps
-  import_tasks: cp_ufw_apps.yml
+- name: Setup UFW
+  import_tasks: setup_ufw.yml
+  tags: ufw
 
 - name: Setup fail2ban
   import_tasks: setup_fail2ban.yml
+  tags: fail2bam
+
+- name: Setup syslog
+  import_tasks: setup_syslog.yml
+  tags: syslog
+
+- name: Setup NTP
+  import_tasks: setup_ntp.yml
+  tags: ntp
 ...

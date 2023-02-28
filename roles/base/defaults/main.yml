@@ -2,13 +2,23 @@
 packages:
   - vim
   - ufw
+  - fail2ban
+  - syslog-ng
 
 ufw_apps_path: /etc/ufw/applications.d
-
 ufw_apps:
   - ssh-custom
 
 fail2ban_jails_path: /etc/fail2ban/jail.d
 fail2ban_jails:
   - fail2ban-custom.conf
+
+syslog_dest: 172.20.254.100
+syslog_port: 514
+
+ntp_servers:
+  - 0.debian.pool.ntp.org
+  - 1.debian.pool.ntp.org
+  - 2.debian.pool.ntp.org
+  - 3.debian.pool.ntp.org
 ...

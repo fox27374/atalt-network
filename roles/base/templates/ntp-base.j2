@@ -1,0 +1,9 @@
+[Time]
+{% set ntp_servers_tmp = [] %}
+{% for server in ntp_servers %}
+{% if loop.index != 1 %}
+{% set ntp_servers_tmp = ntp_servers_tmp.append(server) %}
+{% endif %}
+{% endfor %}
+NTP={{ ntp_servers | first }}
+FallbackNTP={{ ntp_servers_tmp | join(" ") }}

@@ -1,0 +1,11 @@
+---
+- name: Generate syslog-ng basic config
+  become: yes
+  ansible.builtin.template:
+    src: syslog-base.j2
+    dest: /etc/syslog-ng/conf.d/syslog-base.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart syslog-ng Service
+...

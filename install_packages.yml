@@ -1,5 +1,6 @@
 ---
 - hosts: vm rpi
+  gather_facts: no
   roles:
     - base
 ...
