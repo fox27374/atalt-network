@@ -1,19 +1,15 @@
 ---
 all:
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
   children:
     vm:
       hosts:
-        #172.20.254.251:
-        #172.20.254.254:
+        #dkpr03.lnxnet.org:
+        #dkpr01.lnxnet.org:
     rpi:
       hosts:
-        172.20.254.253:
-        172.20.254.250:
+        ataltrp04.lnxnet.org:
+        atwatrp01.lnxnet.org:
     bsd:
-      vars:
-        ansible_python_interpreter: /usr/local/bin/python3
       hosts:
         10.140.60.249:   
 ...
