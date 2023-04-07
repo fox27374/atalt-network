@@ -29,4 +29,9 @@
     rule: allow
     name: "{{ item }}"
   loop: "{{ ufw_apps }}"
+
+- name: Enable UFW
+  become: yes
+  community.general.ufw:
+    state: enabled
 ...

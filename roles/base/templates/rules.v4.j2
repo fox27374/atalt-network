@@ -1,0 +1,54 @@
+# Custom Iptables Rules
+
+*filter
+
+# Flush existing rules
+-F
+
+# Set default policies
+-P INPUT DROP
+-P OUTPUT DROP
+-P FORWARD DROP
+
+# Allow established and related connections
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Allow loopback traffic
+-A INPUT -i lo -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+
+# Allow incoming TCP traffic
+{% for rule in allowed_in_tcp %}
+-A INPUT -s {{ rule.ip_address }} -p tcp --dport {{ rule.port }} -j ACCEPT
+{% endfor %}
+
+# Allow incoming UDP traffic
+{% for rule in allowed_in_udp %}
+-A INPUT -s {{ rule.ip_address }} -p udp --dport {{ rule.port }} -j ACCEPT
+{% endfor %}
+
+# Allow outgoing TCP traffic
+{% for rule in allowed_out_tcp %}
+-A OUTPUT -d {{ rule.ip_address }} -p tcp --dport {{ rule.port }} -j ACCEPT
+{% endfor %}
+
+# Allow outgoing UDP traffic
+{% for rule in allowed_out_udp %}
+-A OUTPUT -d {{ rule.ip_address }} -p udp --dport {{ rule.port }} -j ACCEPT
+{% endfor %}
+
+# Add custom rules
+{% for rule in custom_rules %}
+{{ rule }}
+{% endfor %}
+
+# Log and drop all other incoming traffic
+-A INPUT -j LOG --log-prefix "DROP: "
+-A INPUT -j DROP
+
+# Log and drop all other outgoing traffic
+-A OUTPUT -j LOG --log-prefix "DROP: "
+-A OUTPUT -j DROP
+
+COMMIT

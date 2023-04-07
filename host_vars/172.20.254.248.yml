@@ -1,0 +1,22 @@
+---
+allowed_in_tcp:
+  - ip_address: 172.20.254.253
+    port: 22
+  - ip_address: 116.203.37.199
+    port: 22
+
+allowed_in_udp:
+  - ip_address: 116.203.37.199
+    port: 51820
+
+allowed_out_tcp:
+  - ip_address: 0.0.0.0/0
+    port: 443
+
+allowed_out_udp:
+  - ip_address: 0.0.0.0/0
+    port: 123
+
+custom_rules:
+  - "-A INPUT -s 172.20.254.0/24 -p icmp -j ACCEPT"
+...

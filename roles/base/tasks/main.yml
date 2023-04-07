@@ -1,15 +1,15 @@
 ---
-#- name: Install Software
-#  import_tasks: install_software.yml
-  #when: ansible_facts['os_family']|lower == 'debian'
+- name: Install Software
+  import_tasks: install_software.yml
+  tags: install
 
 - name: Setup SSH
   import_tasks: setup_ssh.yml
   tags: ssh
 
-- name: Setup UFW
-  import_tasks: setup_ufw.yml
-  tags: ufw
+# - name: Setup UFW
+#   import_tasks: setup_ufw.yml
+#   tags: ufw
 
 - name: Setup fail2ban
   import_tasks: setup_fail2ban.yml
@@ -22,4 +22,8 @@
 - name: Setup NTP
   import_tasks: setup_ntp.yml
   tags: ntp
+
+- name: Setup IPTABLES
+  import_tasks: setup_iptables.yml
+  tags: iptables
 ...
