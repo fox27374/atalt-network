@@ -1,4 +1,12 @@
 ---
+- name: Set OS distribution
+  ansible.builtin.set_fact:
+    os: "{{ ansible_distribution }}"
+
+- name: Print OS
+  ansible.builtin.debug:
+    var: os
+
 - name: Update Repositories
   become: yes
   ansible.builtin.apt:

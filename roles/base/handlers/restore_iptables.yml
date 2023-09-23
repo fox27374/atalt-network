@@ -1,0 +1,7 @@
+---
+- name: Restore iptables
+  become: true
+  ansible.builtin.shell:
+    cmd: "iptables-restore < /tmp/rules.v4"
+  changed_when: false
+...

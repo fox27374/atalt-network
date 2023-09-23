@@ -1,0 +1,124 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dot11
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dot11-web
+  namespace: dot11
+spec:
+  selector:
+    app: dot11-web
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dot11-web
+  namespace: dot11
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dot11-web
+  namespace: dot11
+data:
+  dot11.conf: |
+    server {
+    listen 0.0.0.0:8080;
+    server_name www.dot11.org;
+    root /opt/dot11;
+    index index.htm index.html;
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dot11-web
+  labels:
+    app: dot11-web
+  namespace: dot11
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dot11-web
+  template:
+    metadata:
+      labels:
+        app: dot11-web
+    spec:
+      initContainers:
+        - name: copy-web-content
+          image: busybox
+          args:
+            - 'rm -rf /opt/dot11/* && cp -r /opt/dot11-temp/* /opt/dot11/'
+          command:
+            - "sh"
+            - "-c"
+          volumeMounts:
+            - name: dot11-data
+              mountPath: /opt/dot11
+            - name: dot11-data-temp
+              mountPath: /opt/dot11-temp
+      containers:
+      - name: dot11-web
+        image: bitnami/nginx:latest
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: dot11-data
+          mountPath: /opt/dot11
+        - name: dot11-conf
+          mountPath: /opt/bitnami/nginx/conf/server_blocks/
+      automountServiceAccountToken: false
+      volumes:
+      - name: dot11-data
+        persistentVolumeClaim:
+          claimName: dot11-web
+      - name: dot11-conf
+        configMap:
+          name: dot11-web
+      - name: dot11-data-temp
+        hostPath:
+          path: /home/dkofler/dot11
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dot11-web
+  namespace: dot11
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+
+spec:
+  tls:
+  - hosts:
+    - www.dot11.org
+    secretName: dot11-cert
+  rules:
+  - host: www.dot11.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dot11-web
+            port:
+              number: 8080
+...

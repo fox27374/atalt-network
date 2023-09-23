@@ -7,8 +7,8 @@
 
 # Set default policies
 -P INPUT DROP
--P OUTPUT DROP
 -P FORWARD DROP
+-P OUTPUT ACCEPT
 
 # Allow established and related connections
 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
@@ -19,36 +19,40 @@
 -A OUTPUT -o lo -j ACCEPT
 
 # Allow incoming TCP traffic
+{% if allowed_in_tcp is defined %}
 {% for rule in allowed_in_tcp %}
+{% if rule.ip_address is defined %}
 -A INPUT -s {{ rule.ip_address }} -p tcp --dport {{ rule.port }} -j ACCEPT
+{% else %}
+-A INPUT -p tcp --dport {{ rule.port }} -j ACCEPT
+{% endif %}
 {% endfor %}
+{% endif %}
 
 # Allow incoming UDP traffic
+{% if allowed_in_udp is defined %}
 {% for rule in allowed_in_udp %}
+{% if rule.ip_address is defined %}
 -A INPUT -s {{ rule.ip_address }} -p udp --dport {{ rule.port }} -j ACCEPT
+{% else %}
+-A INPUT -p udp --dport {{ rule.port }} -j ACCEPT
+{% endif %}
 {% endfor %}
-
-# Allow outgoing TCP traffic
-{% for rule in allowed_out_tcp %}
--A OUTPUT -d {{ rule.ip_address }} -p tcp --dport {{ rule.port }} -j ACCEPT
-{% endfor %}
-
-# Allow outgoing UDP traffic
-{% for rule in allowed_out_udp %}
--A OUTPUT -d {{ rule.ip_address }} -p udp --dport {{ rule.port }} -j ACCEPT
-{% endfor %}
+{% endif %}
 
 # Add custom rules
+{% if custom_rules is defined %}
 {% for rule in custom_rules %}
 {{ rule }}
 {% endfor %}
+{% endif %}
 
 # Log and drop all other incoming traffic
 -A INPUT -j LOG --log-prefix "DROP: "
 -A INPUT -j DROP
 
 # Log and drop all other outgoing traffic
--A OUTPUT -j LOG --log-prefix "DROP: "
--A OUTPUT -j DROP
+# -A OUTPUT -j LOG --log-prefix "DROP: "
+# -A OUTPUT -j DROP
 
 COMMIT

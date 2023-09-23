@@ -13,4 +13,7 @@
 
 - name: Restart NTP Service
   import_tasks: restart_ntp.yml
+
+- name: Restore iptables
+  import_tasks: restore_iptables.yml
 ...

@@ -3,9 +3,9 @@ all:
   children:
     vm:
       hosts:
-        #172.20.254.251 # dkpr03.lnxnet.org:
-        #172.20.254.254 # dkpr01.lnxnet.org:
-        172.20.254.248 # dkpr11.lnxnet.org
+        172.20.254.251: # dkpr03.lnxnet.org
+        172.20.254.254: # dkpr01.lnxnet.org
+        #172.20.254.248: # dkpr11.lnxnet.org
     rpi:
       hosts:
         ataltrp04.lnxnet.org:
@@ -13,5 +13,5 @@ all:
         atwatrp01.lnxnet.org:
     bsd:
       hosts:
-        10.140.60.249:   
+        10.140.60.249:
 ...

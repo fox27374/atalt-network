@@ -13,7 +13,7 @@
 
 - name: Setup fail2ban
   import_tasks: setup_fail2ban.yml
-  tags: fail2bam
+  tags: fail2ban
 
 - name: Setup syslog
   import_tasks: setup_syslog.yml
