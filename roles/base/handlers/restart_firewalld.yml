@@ -1,7 +1,7 @@
 ---
-- name: Restart UFW Service
+- name: Restart firewalld Service
   become: true
   ansible.builtin.service:
-    name: ufw
+    name: firewalld
     state: restarted
 ...

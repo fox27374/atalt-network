@@ -17,10 +17,19 @@
   ansible.builtin.apt:
     upgrade: yes
 
-- name: Install Packages
+- name: Install Base Packages
   become: yes
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-  loop: "{{ packages }}"
+  loop: "{{ software_packages }}"
+
+- name: Install Custom Packages
+  become: yes
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ custom_software_packages }}"
+  when:
+    - custom_software_packages is defined
 ...

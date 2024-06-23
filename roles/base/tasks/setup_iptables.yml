@@ -1,8 +1,0 @@
----
-- name: Render iptables template
-  ansible.builtin.template:
-    src: rules.v4.j2
-    dest: /tmp/rules.v4
-  notify:
-    - Restore iptables
-...

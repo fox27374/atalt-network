@@ -1,0 +1,26 @@
+---
+ansible_python_interpreter: /usr/bin/python3
+
+ssh_users:
+  - ansible
+  - dkofler
+
+firewalld_services:
+  - ssh
+
+software_packages:
+  - vim
+  - fail2ban
+  - syslog-ng
+
+ntp_servers:
+  - 0.debian.pool.ntp.org
+  - 1.debian.pool.ntp.org
+  - 2.debian.pool.ntp.org
+  - 3.debian.pool.ntp.org
+
+syslog_destinations:
+  - 172.20.254.100
+  - 172.20.254.101
+syslog_port: 514
+...

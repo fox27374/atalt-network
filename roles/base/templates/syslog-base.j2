@@ -7,18 +7,21 @@ source s_ufw {
 };
 
 # Remote syslog destination
-destination d_net { 
+
+{% set dest_var = 0 %}
+{% for destination in syslog_destinations %}
+destination d_net_{{ dest_var }} { 
     udp(
-        {{ syslog_dest }}
+        {{ destination }}
         port({{ syslog_port }})
         log_fifo_size(1000)
         );
 };
 
-# Send all internal logs to the remote syslog
-# s_src is defined in the main syslog-ng.conf
-log { source(s_src); destination(d_net); };
+# Internal logs
+log { source(s_src); destination(d_net_{{ dest_var }}); };
 
 # Custom logs
-log { source(s_fail2ban); destination(d_net); };
-log { source(s_ufw); destination(d_net); };
+log { source(s_fail2ban); destination(d_net_{{ dest_var }}); };
+{% set dest_var = dest_var + 1 %}
+{% endfor %}

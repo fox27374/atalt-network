@@ -2,28 +2,36 @@
 - name: Install Software
   import_tasks: install_software.yml
   tags: install
+  when:
+    - install_software
 
 - name: Setup SSH
   import_tasks: setup_ssh.yml
   tags: ssh
-
-# - name: Setup UFW
-#   import_tasks: setup_ufw.yml
-#   tags: ufw
+  when:
+    - setup_ssh
 
 - name: Setup fail2ban
   import_tasks: setup_fail2ban.yml
   tags: fail2ban
+  when:
+    - setup_fail2ban
 
 - name: Setup syslog
   import_tasks: setup_syslog.yml
   tags: syslog
+  when:
+    - setup_syslog
 
 - name: Setup NTP
   import_tasks: setup_ntp.yml
   tags: ntp
+  when:
+    - setup_ntp
 
-- name: Setup IPTABLES
-  import_tasks: setup_iptables.yml
-  tags: iptables
+- name: Setup firewalld
+  import_tasks: setup_firewalld.yml
+  tags: firewalld
+  when:
+    - setup_firewalld
 ...

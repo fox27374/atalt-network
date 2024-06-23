@@ -4,4 +4,15 @@
   tasks:
     - name: Ansible Ping
       ping:
+
+- name: Get network interface
+  hosts: rpi
+  tasks: 
+    - name: Set default network interface
+      ansible.builtin.set_fact:
+        network_interface: "{{ ansible_default_ipv4.interface }}"
+
+    - name: Print network interface
+      ansible.builtin.debug:
+        var: network_interface
 ...
