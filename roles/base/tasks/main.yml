@@ -5,6 +5,18 @@
   when:
     - install_software
 
+- name: Install OTEL
+  import_tasks: install_otel.yml
+  tags: otel
+  when:
+    - install_otel
+
+- name: Setup OTEL
+  import_tasks: setup_otel.yml
+  tags: otel
+  when:
+    - setup_otel
+
 - name: Setup SSH
   import_tasks: setup_ssh.yml
   tags: ssh

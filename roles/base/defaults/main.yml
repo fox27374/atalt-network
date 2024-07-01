@@ -1,5 +1,7 @@
 ---
 install_software: false
+install_otel: false
+setup_otel: true
 setup_fail2ban: false
 setup_firewalld: false
 setup_ntp: false

@@ -1,0 +1,12 @@
+---
+- name: Generate OTEL basic config
+  become: yes
+  ansible.builtin.template:
+    src: otel-base.j2
+    dest: /etc/otelcol/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart OTEL Service
+...

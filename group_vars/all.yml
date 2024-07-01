@@ -13,6 +13,8 @@ software_packages:
   - fail2ban
   - syslog-ng
 
+otel_version: 0.103.1
+
 ntp_servers:
   - 0.debian.pool.ntp.org
   - 1.debian.pool.ntp.org

@@ -5,15 +5,12 @@
 - name: Restart fail2ban Service
   import_tasks: restart_fail2ban.yml
 
-- name: Restart ufw Service
-  import_tasks: restart_ufw.yml
-
 - name: Restart syslog-ng Service
   import_tasks: restart_syslog.yml
 
 - name: Restart NTP Service
   import_tasks: restart_ntp.yml
 
-- name: Restore iptables
-  import_tasks: restore_iptables.yml
+- name: Restart OTEL
+  import_tasks: restart_otel.yml
 ...
