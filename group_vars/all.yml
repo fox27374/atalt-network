@@ -8,6 +8,9 @@ ssh_users:
 firewalld_services:
   - ssh
 
+custom_firewalld_services:
+  - 9080/tcp
+
 software_packages:
   - vim
   - fail2ban

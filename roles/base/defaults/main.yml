@@ -1,6 +1,6 @@
 ---
 install_software: false
-install_otel: false
+install_otel: true
 setup_otel: true
 setup_fail2ban: false
 setup_firewalld: false

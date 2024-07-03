@@ -4,17 +4,13 @@
     url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol_{{ otel_version }}_linux_arm64.deb
     dest: /tmp/otelcol.deb
     mode: '0640'
-  when: ansible_facts['architecture'] == "aarch64"
-
-- name: Download OTEL collector
-  ansible.builtin.get_url:
-    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol_{{ otel_version }}_linux_armv7.deb
-    dest: /tmp/otelcol.deb
-    mode: '0640'
-  when: ansible_facts['architecture'] == "armv6l"
+  when:
+    - ansible_facts['architecture'] == "aarch64"
 
 - name: Install OTEL collector
   become: yes
   ansible.builtin.apt:
     deb: /tmp/otelcol.deb
+  when:
+    - ansible_facts['architecture'] == "aarch64"
 ...
