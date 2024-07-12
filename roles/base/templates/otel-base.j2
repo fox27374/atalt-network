@@ -1,9 +1,5 @@
 extensions:
   health_check:
-  pprof:
-    endpoint: 0.0.0.0:1777
-  zpages:
-    endpoint: 0.0.0.0:55679
 
 receivers:
   hostmetrics:
@@ -14,24 +10,35 @@ receivers:
       load:
       memory:
       network:
-      process:
-      processes:
       paging:
+  journald:
 
 processors:
   batch:
 
 exporters:
-  #debug:
-  #  verbosity: detailed
   prometheus:
     endpoint: "0.0.0.0:9080"
+  otlp:
+    endpoint: "10.140.60.249:4317"
+    tls:
+      insecure: true
 
 service:
   pipelines:
     metrics:
-      receivers: [hostmetrics]
-      processors: [batch]
-      exporters: [prometheus]
+      receivers:
+      - hostmetrics
+      processors:
+      - batch
+      exporters:
+      - prometheus
+      - otlp
+    logs:
+      receivers:
+      - journald
+      exporters:
+      - otlp
 
-  extensions: [health_check, pprof, zpages]
+  extensions:
+  - health_check

@@ -1,16 +1,28 @@
 ---
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts['architecture']
+
 - name: Download OTEL collector
   ansible.builtin.get_url:
-    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol_{{ otel_version }}_linux_arm64.deb
+    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_arm64.deb
     dest: /tmp/otelcol.deb
     mode: '0640'
   when:
     - ansible_facts['architecture'] == "aarch64"
+
+- name: Download OTEL collector
+  ansible.builtin.get_url:
+    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_amd64.deb
+    dest: /tmp/otelcol.deb
+    mode: '0640'
+  when:
+    - ansible_facts['architecture'] == "x86_64"
 
 - name: Install OTEL collector
   become: yes
   ansible.builtin.apt:
     deb: /tmp/otelcol.deb
   when:
-    - ansible_facts['architecture'] == "aarch64"
+    - ansible_facts['architecture'] == "aarch64" or ansible_facts['architecture'] == "x86_64"
 ...

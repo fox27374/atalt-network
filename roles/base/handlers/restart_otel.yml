@@ -2,6 +2,6 @@
 - name: Restart OTEL Service
   become: true
   ansible.builtin.service:
-    name: otelcol
+    name: otelcol-contrib
     state: restarted
 ...

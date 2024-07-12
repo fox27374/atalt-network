@@ -3,7 +3,7 @@
   become: yes
   ansible.builtin.template:
     src: otel-base.j2
-    dest: /etc/otelcol/config.yaml
+    dest: /etc/otelcol-contrib/config.yaml
     owner: root
     group: root
     mode: '0644'

@@ -2,27 +2,31 @@
 ansible_python_interpreter: /usr/bin/python3
 
 ssh_users:
-  - ansible
-  - dkofler
+- ansible
+- dkofler
 
 firewalld_services:
-  - ssh
+- ssh
 
 custom_firewalld_services:
-  - 9080/tcp
+- 9080/tcp
 
 software_packages:
-  - vim
-  - fail2ban
-  - syslog-ng
+- vim
+- fail2ban
+- syslog-ng
 
-otel_version: 0.103.1
+uninstall_software_packages:
+- otelcol
+- ufw
+
+otel_version: 0.104.0
 
 ntp_servers:
-  - 0.debian.pool.ntp.org
-  - 1.debian.pool.ntp.org
-  - 2.debian.pool.ntp.org
-  - 3.debian.pool.ntp.org
+- 0.debian.pool.ntp.org
+- 1.debian.pool.ntp.org
+- 2.debian.pool.ntp.org
+- 3.debian.pool.ntp.org
 
 syslog_destinations:
   - 172.20.254.100

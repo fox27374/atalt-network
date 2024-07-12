@@ -7,6 +7,16 @@
   ansible.builtin.debug:
     var: os
 
+- name: Uninstall Software
+  become: yes
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+    purge: true
+  loop: "{{ uninstall_software_packages }}"
+  when:
+    - uninstall_software_packages is defined
+
 - name: Update Repositories
   become: yes
   ansible.builtin.apt:
