@@ -1,0 +1,7 @@
+---
+- name: Restart Bird Service
+  become: true
+  ansible.builtin.service:
+    name: bird
+    state: restarted
+...

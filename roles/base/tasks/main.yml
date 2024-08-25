@@ -46,4 +46,10 @@
   tags: firewalld
   when:
     - setup_firewalld
+
+- name: Setup bird
+  import_tasks: setup_bird.yml
+  tags: bird
+  when:
+    - setup_bird
 ...

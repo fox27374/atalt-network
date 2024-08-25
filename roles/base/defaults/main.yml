@@ -1,10 +1,11 @@
 ---
 install_software: false
 install_otel: false
-setup_otel: true
+setup_otel: false
 setup_fail2ban: false
 setup_firewalld: false
 setup_ntp: false
 setup_syslog: false
 setup_ssh: false
+setup_bird: true
 ...

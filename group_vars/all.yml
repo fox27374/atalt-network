@@ -32,4 +32,8 @@ syslog_destinations:
   - 172.20.254.100
   - 172.20.254.101
 syslog_port: 514
+
+wireguard: true
+
+wireguard_role: client
 ...

@@ -13,4 +13,7 @@
 
 - name: Restart OTEL
   import_tasks: restart_otel.yml
+
+- name: Restart Bird
+  import_tasks: restart_bird.yml
 ...

@@ -1,0 +1,40 @@
+---
+- name: Install Bird Package
+  become: yes
+  ansible.builtin.apt:
+    name: "bird2"
+    state: present
+
+- name: Create bird logfile
+  become: yes
+  ansible.builtin.file:
+    path: /var/log/bird.log
+    state: touch
+    owner: root
+    group: bird
+    mode: '0664'
+
+- name: Generate bird client config
+  become: yes
+  ansible.builtin.template:
+    src: bird-client-base.j2
+    dest: /etc/bird/bird.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Bird Service
+  when:
+    - wireguard_role == "client"
+
+- name: Generate bird server config
+  become: yes
+  ansible.builtin.template:
+    src: bird-server-base.j2
+    dest: /etc/bird/bird.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Bird Service
+  when:
+    - wireguard_role == "server"
+...

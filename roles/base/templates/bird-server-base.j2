@@ -1,0 +1,36 @@
+router id 172.20.254.254;
+
+log syslog all;
+log "/var/log/bird.log" { debug, info, remote, warning, error, auth, fatal, bug };
+
+ipv4 table bgp4;
+
+protocol device DEVICE { scan time 10; }
+
+filter reject_default_route {
+  if net !~ [0.0.0.0/0] then accept;
+  reject;
+}
+
+protocol kernel {
+  ipv4 {
+    table bgp4;
+    import filter reject_default_route;
+    export all;
+  };
+}
+
+protocol bgp CLIENT {
+  debug all;
+  hold time 6;
+  error wait time 3,9;
+  passive on;
+  local 172.20.254.254 as 65254;
+  neighbor range 172.20.254.0/24 external;
+  ipv4 {
+    table bgp4;
+    import filter reject_default_route;
+    export all;
+    #export filter reject_default_route;
+  };
+}

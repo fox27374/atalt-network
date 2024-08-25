@@ -4,4 +4,6 @@ ssh_users:
 - dkofler
 - mrosenkranz
 - mfill
+
+wireguard_role: server
 ...

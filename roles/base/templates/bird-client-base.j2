@@ -1,0 +1,47 @@
+{% set wg0_ip =  hostvars[inventory_hostname]['ansible_wg0']['ipv4']['address'] -%}
+{% set octets = wg0_ip.split('.') -%}
+{% set as = "65" + octets[3] -%}
+
+
+router id {{ wg0_ip }};
+
+log syslog all;
+log "/var/log/bird.log" { debug, info, remote, warning, error, auth, fatal, bug };
+
+ipv4 table bgp4;
+
+protocol device DEVICE { scan time 10; }
+
+filter reject_default_route {
+  if net !~ [0.0.0.0/0] then accept;
+  reject;
+}
+
+protocol kernel {
+  ipv4 {
+    table bgp4;
+    export all;
+    #import all;
+  };
+}
+
+protocol direct {
+  interface "-wg0", "-docker0", "*";
+  ipv4 {
+    table bgp4;
+    export all;
+  };
+}
+
+protocol bgp GATE {
+        debug all;
+        local as {{ as }};
+        neighbor 172.20.254.254 external;
+        source address {{ wg0_ip }};
+        ipv4 {
+                table bgp4;
+		next hop self;
+                import filter reject_default_route;
+                export filter reject_default_route;
+        };
+}
