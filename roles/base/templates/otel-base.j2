@@ -12,6 +12,9 @@ receivers:
       network:
       paging:
   journald:
+    units:
+    - ssh
+    - "session-*"
 
 processors:
   batch:
@@ -28,10 +31,24 @@ processors:
           enabled: false
 
 exporters:
-  otlphttp:
-    endpoint: http://otlp.lnxnet.org:4318
-    tls:
-      insecure: true
+  # Metrics + Events
+  splunk_hec/metrics:
+    token: "{{ splunk_hec_token }}"
+    endpoint: "{{ splunk_hec_url }}"
+    source: "otel"
+    sourcetype: "otel"
+    index: "linux_metrics"
+    profiling_data_enabled: false
+  # Logs
+  splunk_hec/logs:
+    token: "{{ splunk_hec_token }}"
+    endpoint: "{{ splunk_hec_url }}"
+    source: "otel"
+    sourcetype: "otel"
+    index: "linux_logs"
+    profiling_data_enabled: false
+  debug:
+    verbosity: detailed
 
 service:
   pipelines:
@@ -42,12 +59,15 @@ service:
       - batch
       - resourcedetection
       exporters:
-      - otlphttp
-    #logs:
-    #  receivers:
-    #  - journald
-    #  exporters:
-    #  - debug
+      - splunk_hec/metrics
+    logs:
+      receivers:
+      - journald
+      processors:
+      - batch
+      - resourcedetection
+      exporters:
+      - splunk_hec/logs
 
   extensions:
   - health_check

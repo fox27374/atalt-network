@@ -20,7 +20,7 @@ uninstall_software_packages:
 - otelcol
 - ufw
 
-otel_version: 0.104.0
+otel_version: 0.120.0
 
 ntp_servers:
 - 0.debian.pool.ntp.org
@@ -32,6 +32,9 @@ syslog_destinations:
   - 172.20.254.100
   - 172.20.254.101
 syslog_port: 514
+
+splunk_hec_url: http://hec.lnxnet.org/services/collector
+splunk_hec_token: cc6d2e34-1a4d-4d18-a5d5-a56d5338f45c
 
 wireguard: true
 

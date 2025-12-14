@@ -1,8 +1,4 @@
 ---
-#- name: Print OS architecture
-#  ansible.builtin.debug:
-#    var: ansible_facts['architecture']
-
 - name: Generate OTEL basic config
   become: yes
   ansible.builtin.template:

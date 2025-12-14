@@ -4,12 +4,11 @@ all:
     server:
       hosts:
         172.20.254.254: # dk-gate.lnxnet.org
-        172.20.254.247: # atku-nts-jumphost.lnxnet.org
-        172.20.254.248: # dkpr11.lnxnet.org
+        10.140.60.249: # ataltpr05.lnxnet.org
+        10.140.60.248: # ataltpr06.lnxnet.org
     rpi:
       hosts:
         10.140.60.253: # ataltrp01.lnxnet.org
         10.140.60.252: # ataltrp02.lnxnet.org
-        172.20.254.250: # atwatrp01.lnxnet.org
         172.20.254.251: # atwatrp02.lnxnet.org
 ...

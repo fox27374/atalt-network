@@ -25,4 +25,11 @@
     deb: /tmp/otelcol.deb
   when:
     - ansible_facts['architecture'] == "aarch64" or ansible_facts['architecture'] == "x86_64"
+
+- name: Add OTEL user to journal group
+  become: yes
+  ansible.builtin.user:
+    name: otelcol-contrib
+    groups: systemd-journal
+    append: yes
 ...
