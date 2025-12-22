@@ -3,28 +3,50 @@
   ansible.builtin.debug:
     var: ansible_facts['architecture']
 
-- name: Download OTEL collector
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts['distribution']
+
+- name: Download OTEL collector ARM
   ansible.builtin.get_url:
     url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_arm64.deb
     dest: /tmp/otelcol.deb
     mode: '0640'
   when:
     - ansible_facts['architecture'] == "aarch64"
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
-- name: Download OTEL collector
+- name: Download OTEL collector AMD64
   ansible.builtin.get_url:
     url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_amd64.deb
     dest: /tmp/otelcol.deb
     mode: '0640'
   when:
     - ansible_facts['architecture'] == "x86_64"
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
-- name: Install OTEL collector
+- name: Download OTEL collector RPM
+  ansible.builtin.get_url:
+    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_amd64.rpm
+    dest: /tmp/otelcol.rpm
+    mode: '0640'
+  when:
+    - ansible_facts['architecture'] == "x86_64"
+    - ansible_facts['distribution'] == "Redhat"
+
+- name: Install OTEL collector DEB
   become: yes
   ansible.builtin.apt:
     deb: /tmp/otelcol.deb
   when:
-    - ansible_facts['architecture'] == "aarch64" or ansible_facts['architecture'] == "x86_64"
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
+
+- name: Install OTEL collector RPM
+  ansible.builtin.dnf:
+    name: /tmp/otelcol.rpm
+    state: present
+  when:
+    - ansible_facts['distribution'] == "Redhat"
 
 - name: Add OTEL user to journal group
   become: yes
