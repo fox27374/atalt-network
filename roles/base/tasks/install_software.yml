@@ -1,12 +1,4 @@
 ---
-- name: Set OS distribution
-  ansible.builtin.set_fact:
-    os: "{{ ansible_distribution }}"
-
-- name: Print OS
-  ansible.builtin.debug:
-    var: os
-
 - name: Uninstall Software
   become: yes
   ansible.builtin.apt:
@@ -16,16 +8,21 @@
   loop: "{{ uninstall_software_packages }}"
   when:
     - uninstall_software_packages is defined
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Update Repositories
   become: yes
   ansible.builtin.apt:
     update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Upgrade Software
   become: yes
   ansible.builtin.apt:
     upgrade: yes
+  when:
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Install Base Packages
   become: yes
@@ -33,6 +30,8 @@
     name: "{{ item }}"
     state: present
   loop: "{{ software_packages }}"
+  when:
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Install Custom Packages
   become: yes
@@ -42,4 +41,5 @@
   loop: "{{ custom_software_packages }}"
   when:
     - custom_software_packages is defined
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 ...
