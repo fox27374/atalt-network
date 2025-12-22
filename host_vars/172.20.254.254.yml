@@ -2,8 +2,6 @@
 ssh_users:
 - ansible
 - dkofler
-- mrosenkranz
-- mfill
 
 wireguard_role: server
 ...

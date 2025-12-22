@@ -1,7 +1,0 @@
----
-ssh_users:
-- ansible
-- dkofler
-- mrosenkranz
-- mfill
-...
