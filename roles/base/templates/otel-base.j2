@@ -13,7 +13,7 @@ receivers:
       paging:
   journald:
     units:
-    - ssh
+    - ssh.service
     - "session-*"
 
 processors:
@@ -37,16 +37,20 @@ exporters:
     endpoint: "{{ splunk_hec_url }}"
     source: "otel"
     sourcetype: "otel"
-    index: "linux_metrics"
+    index: "lnxnet_metrics"
     profiling_data_enabled: false
+    tls:
+      insecure_skip_verify: true
   # Logs
   splunk_hec/logs:
     token: "{{ splunk_hec_token }}"
     endpoint: "{{ splunk_hec_url }}"
     source: "otel"
     sourcetype: "otel"
-    index: "linux_logs"
+    index: "lnxnet_logs"
     profiling_data_enabled: false
+    tls:
+      insecure_skip_verify: true
   debug:
     verbosity: detailed
 
