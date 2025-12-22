@@ -20,7 +20,7 @@ uninstall_software_packages:
 - otelcol
 - ufw
 
-otel_version: 0.120.0
+otel_version: 0.142.0
 
 ntp_servers:
 - 0.debian.pool.ntp.org
