@@ -1,6 +1,6 @@
 ---
 - name: Copy sshd_config
-  become: yes
+  become: true
   ansible.builtin.copy:
     src: sshd_config
     dest: /etc/ssh/sshd_config

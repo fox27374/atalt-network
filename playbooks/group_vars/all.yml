@@ -1,0 +1,6 @@
+install_software: true
+setup_ssh: false
+setup_fail2ban: false
+setup_syslog: false
+setup_ntp: false
+setup_iptables: false

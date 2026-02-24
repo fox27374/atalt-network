@@ -1,13 +1,13 @@
 ---
 - name: Create timesyncd config directory
-  become: yes
+  become: true
   ansible.builtin.file:
     path: /etc/systemd/timesyncd.conf.d
     state: directory
     mode: '0755'
 
 - name: Generate ntp config
-  become: yes
+  become: true
   ansible.builtin.template:
     src: ntp-base.j2
     dest: /etc/systemd/timesyncd.conf.d/ntp-base.conf

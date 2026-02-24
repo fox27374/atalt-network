@@ -7,14 +7,14 @@
   register: collected_jails
 
 - name: Delete fail2ban jails
-  become: yes
+  become: true
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
   loop: "{{ collected_jails.files }}"
 
 - name: Copy fail2ban jails
-  become: yes
+  become: true
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ fail2ban_jails_path }}"

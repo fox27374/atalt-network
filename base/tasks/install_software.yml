@@ -1,16 +1,18 @@
 ---
-- name: Update Repositories
-  become: yes
+- name: Update/Upgrade apt archives
   ansible.builtin.apt:
     update_cache: yes
+    upgrade: "yes"
+    cache_valid_time: 86400
+  become: true
 
 - name: Upgrade Software
-  become: yes
+  become: true
   ansible.builtin.apt:
     upgrade: yes
 
 - name: Install Packages
-  become: yes
+  become: true
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present

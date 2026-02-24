@@ -3,10 +3,12 @@ all:
   children:
     vm:
       hosts:
-        172.20.254.254 # dk-gate
+        172.20.254.254: # dk-gate
+        ataltpr05.lnxnet.org:
+        ataltpr06.lnxnet.org:
     rpi:
       hosts:
         ataltrp01.lnxnet.org:
-        atwatrp01.lnxnet.org:
+        ataltrp02.lnxnet.org:
         atwatrp02.lnxnet.org:
 ...
