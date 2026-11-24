@@ -1,15 +1,25 @@
 ---
+- name: Copy OTEL Splunk HEC CA certificate
+  become: true
+  ansible.builtin.copy:
+    content: "{{ splunk_hec_ca_cert }}"
+    dest: /etc/otelcol-contrib/splunk-hec-ca.pem
+    owner: root
+    group: root
+    mode: '0644'
+  when: splunk_hec_ca_cert is defined
+  notify:
+    - Restart OTEL Service
+
 - name: Generate OTEL basic config
-  become: yes
+  become: true
   ansible.builtin.template:
     src: otel-base.j2
     dest: /etc/otelcol-contrib/config.yaml
     owner: root
-    group: root
-    mode: '0644'
+    group: otelcol-contrib
+    mode: '0640'
+    validate: /usr/bin/otelcol-contrib validate --config=%s
   notify:
     - Restart OTEL Service
-  when:
-    # Only for ARMv7 and Intel architecture. No OTEL collector available for ARMv6
-    - ansible_facts['architecture'] == "aarch64" or ansible_facts['architecture'] == "x86_64"
 ...

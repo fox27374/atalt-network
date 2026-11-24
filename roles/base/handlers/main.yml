@@ -1,19 +1,16 @@
 ---
 - name: Restart SSH Service
-  import_tasks: restart_ssh.yml
+  ansible.builtin.import_tasks: restart_ssh.yml
 
 - name: Restart fail2ban Service
-  import_tasks: restart_fail2ban.yml
-
-- name: Restart syslog-ng Service
-  import_tasks: restart_syslog.yml
+  ansible.builtin.import_tasks: restart_fail2ban.yml
 
 - name: Restart NTP Service
-  import_tasks: restart_ntp.yml
+  ansible.builtin.import_tasks: restart_ntp.yml
 
 - name: Restart OTEL
-  import_tasks: restart_otel.yml
+  ansible.builtin.import_tasks: restart_otel.yml
 
 - name: Restart Bird
-  import_tasks: restart_bird.yml
+  ansible.builtin.import_tasks: restart_bird.yml
 ...

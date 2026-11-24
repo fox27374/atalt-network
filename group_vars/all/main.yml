@@ -14,11 +14,11 @@ custom_firewalld_services:
 software_packages:
 - vim
 - fail2ban
-- syslog-ng
 
 uninstall_software_packages:
 - otelcol
 - ufw
+- syslog-ng
 
 otel_version: 0.142.0
 
@@ -28,13 +28,11 @@ ntp_servers:
 - 2.debian.pool.ntp.org
 - 3.debian.pool.ntp.org
 
-syslog_destinations:
-  - 172.20.254.100
-  - 172.20.254.101
-syslog_port: 514
-
-splunk_hec_url: http://hec.lnxnet.org/services/collector
-splunk_hec_token: cc6d2e34-1a4d-4d18-a5d5-a56d5338f45c
+splunk_hec_url: https://hec.lnxnet.org/services/collector
+# Defined in group_vars/all/vault.yml (ansible-vault encrypted)
+splunk_hec_token: "{{ vault_splunk_hec_token }}"
+# HEC route currently has a self-signed cert; set splunk_hec_ca_cert (PEM content) to enable verification
+splunk_hec_insecure_skip_verify: true
 
 wireguard: true
 
