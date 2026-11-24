@@ -1,57 +1,63 @@
 ---
-- name: Print all available facts
-  ansible.builtin.debug:
-    var: ansible_facts['architecture']
+- name: Assert OTEL collector build exists for this host
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] in ['Debian', 'RedHat']
+      - ansible_facts['architecture'] in base_otel_arch_map
+    fail_msg: >-
+      no otelcol-contrib build for {{ ansible_facts['os_family'] }} on
+      {{ ansible_facts['architecture'] }} ({{ inventory_hostname }})
 
-- name: Print all available facts
-  ansible.builtin.debug:
-    var: ansible_facts['distribution']
+- name: Set OTEL package arch, extension, groups and file
+  ansible.builtin.set_fact:
+    otel_base_url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}"
+    otel_pkg_arch: "{{ base_otel_arch_map[ansible_facts['architecture']] }}"
+    otel_pkg_ext: "{{ 'deb' if ansible_facts['os_family'] == 'Debian' else 'rpm' }}"
+    otel_groups: "{{ ['systemd-journal'] + (['adm'] if ansible_facts['os_family'] == 'Debian' else []) }}"
 
-- name: Download OTEL collector ARM
+- name: Set OTEL package file
+  ansible.builtin.set_fact:
+    otel_pkg_file: "/tmp/otelcol-contrib_{{ otel_version }}_{{ otel_pkg_arch }}.{{ otel_pkg_ext }}"
+
+- name: Download OTEL collector
   ansible.builtin.get_url:
-    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_arm64.deb
-    dest: /tmp/otelcol.deb
+    url: "{{ otel_base_url }}/otelcol-contrib_{{ otel_version }}_linux_{{ otel_pkg_arch }}.{{ otel_pkg_ext }}"
+    dest: "{{ otel_pkg_file }}"
     mode: '0640'
-  when:
-    - ansible_facts['architecture'] == "aarch64"
-    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
-
-- name: Download OTEL collector AMD64
-  ansible.builtin.get_url:
-    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_amd64.deb
-    dest: /tmp/otelcol.deb
-    mode: '0640'
-  when:
-    - ansible_facts['architecture'] == "x86_64"
-    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
-
-- name: Download OTEL collector RPM
-  ansible.builtin.get_url:
-    url: https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_amd64.rpm
-    dest: /tmp/otelcol.rpm
-    mode: '0640'
-  when:
-    - ansible_facts['architecture'] == "x86_64"
-    - ansible_facts['distribution'] == "Redhat"
+    checksum: "sha256:{{ otel_base_url }}/opentelemetry-collector-releases_otelcol-contrib_checksums.txt"
 
 - name: Install OTEL collector DEB
-  become: yes
+  become: true
   ansible.builtin.apt:
-    deb: /tmp/otelcol.deb
-  when:
-    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
+    deb: "{{ otel_pkg_file }}"
+  when: ansible_facts['os_family'] == 'Debian'
+  notify:
+    - Restart OTEL Service
 
 - name: Install OTEL collector RPM
+  become: true
   ansible.builtin.dnf:
-    name: /tmp/otelcol.rpm
+    name: "{{ otel_pkg_file }}"
     state: present
-  when:
-    - ansible_facts['distribution'] == "Redhat"
+    # Local file, no repo GPG key; integrity is covered by the sha256 checksum on download
+    disable_gpg_check: true
+  when: ansible_facts['os_family'] == 'RedHat'
+  notify:
+    - Restart OTEL Service
 
-- name: Add OTEL user to journal group
-  become: yes
+- name: Add OTEL user to log groups
+  become: true
   ansible.builtin.user:
     name: otelcol-contrib
-    groups: systemd-journal
-    append: yes
+    groups: "{{ otel_groups }}"
+    append: true
+  notify:
+    - Restart OTEL Service
+
+- name: Enable and start OTEL collector
+  become: true
+  ansible.builtin.service:
+    name: otelcol-contrib
+    enabled: true
+    state: started
 ...

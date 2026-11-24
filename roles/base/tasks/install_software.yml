@@ -1,6 +1,6 @@
 ---
 - name: Uninstall Software
-  become: yes
+  become: true
   ansible.builtin.apt:
     name: "{{ item }}"
     state: absent
@@ -10,22 +10,31 @@
     - uninstall_software_packages is defined
     - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
+- name: Uninstall Software (RedHat)
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ uninstall_software_packages }}"
+    state: absent
+  when:
+    - uninstall_software_packages is defined
+    - ansible_facts['os_family'] == "RedHat"
+
 - name: Update Repositories
-  become: yes
+  become: true
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
   when:
     - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Upgrade Software
-  become: yes
+  become: true
   ansible.builtin.apt:
-    upgrade: yes
+    upgrade: true
   when:
     - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Install Base Packages
-  become: yes
+  become: true
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
@@ -34,7 +43,7 @@
     - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
 
 - name: Install Custom Packages
-  become: yes
+  become: true
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present

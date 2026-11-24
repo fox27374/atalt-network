@@ -12,9 +12,10 @@ receivers:
       network:
       paging:
   journald:
-    units:
-    - ssh.service
-    - "session-*"
+    priority: info
+  filelog/fail2ban:
+    include:
+    - /var/log/fail2ban.log
 
 processors:
   batch:
@@ -40,7 +41,12 @@ exporters:
     index: "lnxnet_metrics"
     profiling_data_enabled: false
     tls:
-      insecure_skip_verify: true
+{% if splunk_hec_ca_cert is defined %}
+      insecure_skip_verify: false
+      ca_file: /etc/otelcol-contrib/splunk-hec-ca.pem
+{% else %}
+      insecure_skip_verify: {{ splunk_hec_insecure_skip_verify | bool | lower }}
+{% endif %}
   # Logs
   splunk_hec/logs:
     token: "{{ splunk_hec_token }}"
@@ -50,9 +56,12 @@ exporters:
     index: "lnxnet_logs"
     profiling_data_enabled: false
     tls:
-      insecure_skip_verify: true
-  debug:
-    verbosity: detailed
+{% if splunk_hec_ca_cert is defined %}
+      insecure_skip_verify: false
+      ca_file: /etc/otelcol-contrib/splunk-hec-ca.pem
+{% else %}
+      insecure_skip_verify: {{ splunk_hec_insecure_skip_verify | bool | lower }}
+{% endif %}
 
 service:
   pipelines:
@@ -67,6 +76,7 @@ service:
     logs:
       receivers:
       - journald
+      - filelog/fail2ban
       processors:
       - batch
       - resourcedetection
