@@ -1,0 +1,10 @@
+---
+firewall_enabled: true
+firewall_base_rules: []
+firewall_group_rules: []
+firewall_host_rules: []
+# shortcut: one firewall_group_rules per host; a host in two groups gets only one group's list, merge per group when that happens.
+firewall_trusted_interfaces: []
+firewall_log_drops: true
+firewall_rollback_seconds: 90
+...

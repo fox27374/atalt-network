@@ -2,31 +2,35 @@
 ansible_python_interpreter: /usr/bin/python3
 
 ssh_users:
-- ansible
-- dkofler
+  - ansible
+  - dkofler
 
-firewalld_services:
-- ssh
-
-custom_firewalld_services:
-- 9080/tcp
+firewall_base_rules:
+  - port: 22
+    proto: tcp
+    comment: ssh
+  - port: 546
+    proto: udp
+    source:
+      - fe80::/10
+    comment: dhcpv6-client
 
 software_packages:
-- vim
-- fail2ban
+  - vim
+  - fail2ban
 
 uninstall_software_packages:
-- otelcol
-- ufw
-- syslog-ng
+  - otelcol
+  - ufw
+  - syslog-ng
 
 otel_version: 0.142.0
 
 ntp_servers:
-- 0.debian.pool.ntp.org
-- 1.debian.pool.ntp.org
-- 2.debian.pool.ntp.org
-- 3.debian.pool.ntp.org
+  - 0.debian.pool.ntp.org
+  - 1.debian.pool.ntp.org
+  - 2.debian.pool.ntp.org
+  - 3.debian.pool.ntp.org
 
 splunk_hec_url: https://hec.lnxnet.org/services/collector
 # Defined in group_vars/all/vault.yml (ansible-vault encrypted)

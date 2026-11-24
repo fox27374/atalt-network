@@ -1,0 +1,5 @@
+---
+firewall_dir: /etc/atalt-firewall
+firewall_ruleset: "{{ firewall_dir }}/atalt.nft"
+firewall_ruleset_prev: "{{ firewall_dir }}/atalt.nft.prev"
+...

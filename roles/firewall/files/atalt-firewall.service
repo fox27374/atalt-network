@@ -1,0 +1,13 @@
+[Unit]
+Description=atalt nftables input firewall
+DefaultDependencies=no
+Wants=network-pre.target
+Before=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/atalt-firewall/atalt.nft
+
+[Install]
+WantedBy=multi-user.target

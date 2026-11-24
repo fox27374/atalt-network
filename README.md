@@ -33,3 +33,12 @@ It must contain:
 
     ansible-lint
     ansible-playbook --syntax-check install_base.yml
+
+## Firewall
+
+`firewall.yml` applies the nftables input firewall from `roles/firewall` (table `inet atalt_filter`, other tables are not touched). Rules come from `firewall_base_rules` (group_vars/all), `firewall_group_rules` (group_vars/<group>.yml) and `firewall_host_rules` (host_vars/<host>.yml). Each apply arms a rollback timer (`firewall_rollback_seconds`) that restores the previous ruleset unless the host is still reachable afterwards.
+
+Canary first, then everything:
+
+    ansible-playbook firewall.yml --limit 10.140.60.252
+    ansible-playbook firewall.yml

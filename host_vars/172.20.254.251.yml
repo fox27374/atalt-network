@@ -1,0 +1,5 @@
+---
+# atwatrp02.lnxnet.org
+firewall_trusted_interfaces:
+  - wg0
+...

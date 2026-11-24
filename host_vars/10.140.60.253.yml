@@ -1,0 +1,18 @@
+---
+# ataltrp01.lnxnet.org
+firewall_host_rules:
+  - port: 53
+    proto: tcp
+    comment: dns
+  - port: 53
+    proto: udp
+    comment: dns
+  - port: 5380
+    proto: tcp
+    comment: technitium web
+  - port: 53443
+    proto: tcp
+    comment: technitium web
+firewall_trusted_interfaces:
+  - wg0
+...

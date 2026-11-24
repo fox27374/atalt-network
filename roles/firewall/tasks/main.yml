@@ -1,0 +1,136 @@
+---
+- name: Skip firewall on hosts that opt out
+  ansible.builtin.meta: end_host
+  when: not firewall_enabled
+
+- name: Install nftables
+  ansible.builtin.package:
+    name: nftables
+    state: present
+
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Stop, disable and mask firewalld
+  ansible.builtin.systemd:
+    name: firewalld.service
+    state: stopped
+    enabled: false
+    masked: true
+  when: "'firewalld.service' in ansible_facts.services"
+
+- name: Ensure firewall config directory
+  ansible.builtin.file:
+    path: "{{ firewall_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Stat current ruleset
+  ansible.builtin.stat:
+    path: "{{ firewall_ruleset }}"
+  register: firewall_current
+
+- name: Keep current ruleset as rollback target
+  ansible.builtin.copy:
+    src: "{{ firewall_ruleset }}"
+    dest: "{{ firewall_ruleset_prev }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0600'
+  when: firewall_current.stat.exists
+
+- name: Render ruleset
+  ansible.builtin.template:
+    src: atalt.nft.j2
+    dest: "{{ firewall_ruleset }}"
+    owner: root
+    group: root
+    mode: '0600'
+    validate: /usr/sbin/nft -c -f %s
+  register: firewall_render
+
+# Inline, not a handler: a play failing before handlers run would leave the
+# new file on disk unapplied, and later runs would see it as unchanged.
+- name: Apply ruleset with rollback guard
+  when: firewall_render is changed  # noqa: no-handler
+  block:
+    - name: Set rollback command
+      ansible.builtin.set_fact:
+        firewall_restore_cmd: >-
+          {{ 'cp ' ~ firewall_ruleset_prev ~ ' ' ~ firewall_ruleset ~ ' && nft -f ' ~ firewall_ruleset
+             if firewall_current.stat.exists
+             else 'rm -f ' ~ firewall_ruleset ~ '; nft delete table inet atalt_filter' }}
+
+    - name: Stop leftover rollback timer
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - stop
+          - atalt-firewall-rollback.timer
+      changed_when: false
+      failed_when: false
+
+    - name: Arm rollback timer
+      ansible.builtin.command:
+        argv:
+          - systemd-run
+          - --unit=atalt-firewall-rollback
+          - "--on-active={{ firewall_rollback_seconds }}"
+          - /bin/sh
+          - -c
+          - "{{ firewall_restore_cmd }}"
+      changed_when: true
+
+    - name: Load ruleset
+      ansible.builtin.command:
+        argv:
+          - /usr/sbin/nft
+          - -f
+          - "{{ firewall_ruleset }}"
+      changed_when: true
+
+    - name: Reconnect over fresh SSH through new rules
+      ansible.builtin.meta: reset_connection
+
+    - name: Wait for SSH through new rules
+      ansible.builtin.wait_for_connection:
+        timeout: 30
+
+    - name: Disarm rollback timer
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - stop
+          - atalt-firewall-rollback.timer
+      changed_when: true
+  rescue:
+    - name: Restore previous ruleset file after failed load
+      ansible.builtin.command:
+        argv: [/bin/sh, -c, "{{ firewall_restore_cmd }}"]
+      changed_when: true
+    - name: Disarm rollback timer after restore
+      ansible.builtin.command:
+        argv: [systemctl, stop, atalt-firewall-rollback.timer]
+      changed_when: true
+      failed_when: false
+    - name: Fail after restore
+      ansible.builtin.fail:
+        msg: "Loading {{ firewall_ruleset }} failed; previous ruleset restored."
+
+- name: Install firewall unit
+  ansible.builtin.copy:
+    src: atalt-firewall.service
+    dest: /etc/systemd/system/atalt-firewall.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable firewall unit at boot
+  ansible.builtin.systemd:
+    name: atalt-firewall.service
+    daemon_reload: true
+    enabled: true
+...

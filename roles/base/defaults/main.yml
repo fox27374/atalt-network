@@ -1,7 +1,6 @@
 ---
 install_software: true
 setup_fail2ban: false
-setup_firewalld: false
 setup_ntp: false
 setup_ssh: false
 setup_bird: false

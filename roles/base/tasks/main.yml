@@ -31,12 +31,6 @@
   when:
     - setup_ntp
 
-- name: Setup firewalld
-  ansible.builtin.import_tasks: setup_firewalld.yml
-  tags: firewalld
-  when:
-    - setup_firewalld
-
 - name: Setup bird
   ansible.builtin.import_tasks: setup_bird.yml
   tags: bird
