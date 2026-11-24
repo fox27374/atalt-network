@@ -1,0 +1,5 @@
+---
+# ataltpr05.lnxnet.org
+# MicroShift/OVN needs firewalld; managed separately.
+firewall_enabled: false
+...

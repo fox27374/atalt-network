@@ -1,0 +1,30 @@
+# Managed by Ansible (roles/firewall)
+table inet atalt_filter
+delete table inet atalt_filter
+table inet atalt_filter {
+  chain input {
+    type filter hook input priority filter; policy drop;
+    ct state established,related accept
+    ct state invalid drop
+    iif "lo" accept
+    meta l4proto { icmp, ipv6-icmp } accept
+{% for iface in firewall_trusted_interfaces %}
+    iifname "{{ iface }}" accept
+{% endfor %}
+{% for rule in firewall_base_rules + firewall_group_rules + firewall_host_rules %}
+{% set sources = rule.source | default([]) %}
+{% if not sources %}
+    {{ rule.proto }} dport {{ rule.port }} accept comment "{{ rule.comment }}"
+{% endif %}
+{% if sources | reject('search', ':') | list %}
+    ip saddr { {{ sources | reject('search', ':') | join(', ') }} } {{ rule.proto }} dport {{ rule.port }} accept comment "{{ rule.comment }}"
+{% endif %}
+{% if sources | select('search', ':') | list %}
+    ip6 saddr { {{ sources | select('search', ':') | join(', ') }} } {{ rule.proto }} dport {{ rule.port }} accept comment "{{ rule.comment }}"
+{% endif %}
+{% endfor %}
+{% if firewall_log_drops %}
+    limit rate 5/minute log prefix "atalt-drop: "
+{% endif %}
+  }
+}

@@ -1,7 +1,15 @@
 ---
+# dk-gate.lnxnet.org
 ssh_users:
-- ansible
-- dkofler
+  - ansible
+  - dkofler
 
 wireguard_role: server
+
+firewall_host_rules:
+  - port: 51820
+    proto: udp
+    comment: wireguard
+firewall_trusted_interfaces:
+  - wg0
 ...

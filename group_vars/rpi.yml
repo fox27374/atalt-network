@@ -1,0 +1,6 @@
+---
+firewall_group_rules:
+  - port: 5353
+    proto: udp
+    comment: mdns
+...

@@ -1,0 +1,15 @@
+---
+# ataltpr06.lnxnet.org
+firewall_host_rules:
+  - port: 6443
+    proto: tcp
+    comment: k8s api
+  - port: 8080-8082
+    proto: tcp
+    comment: podman web
+firewall_trusted_interfaces:
+  - cilium_host
+  - cilium_net
+  - cilium_vxlan
+  - "lxc*"
+...
