@@ -17,10 +17,11 @@
     state: stopped
     enabled: false
     masked: true
-  # Already masked (often without the package installed): systemd module would fail with "Could not find"
+  # Listed but not installed (not-found), or already masked: the systemd module masks first,
+  # then fails "Could not find the requested service" on state: stopped
   when:
     - "'firewalld.service' in ansible_facts.services"
-    - ansible_facts.services['firewalld.service'].status != 'masked'
+    - ansible_facts.services['firewalld.service'].status not in ['masked', 'not-found']
 
 - name: Ensure firewall config directory
   ansible.builtin.file:
