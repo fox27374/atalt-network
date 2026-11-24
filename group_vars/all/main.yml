@@ -22,7 +22,7 @@ software_packages:
 uninstall_software_packages:
   - otelcol
   - ufw
-  - syslog-ng
+  - syslog-ng*  # metapackage alone leaves syslog-ng-core and modules
 
 otel_version: 0.142.0
 

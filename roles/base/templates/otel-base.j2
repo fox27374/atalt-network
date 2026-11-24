@@ -13,6 +13,10 @@ receivers:
       paging:
   journald:
     priority: info
+    operators:
+    # Drop the collector's own log lines: export errors would otherwise loop back in
+    - type: filter
+      expr: 'body._SYSTEMD_UNIT == "otelcol-contrib.service"'
   filelog/fail2ban:
     include:
     - /var/log/fail2ban.log
